@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ürün Arama</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    .product {
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    img {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+    a {
+      color: blue;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h2>Ürün Ara</h2>
+  <input type="text" id="search" placeholder="Kod yazın..." oninput="searchProduct()">
+  <div id="result"></div>
+
+  <script>
+    let data = [];
+
+    fetch('https://spreadsheets.google.com/feeds/list/1N2xdNZCFvvbQj6W46TUtCMyVLvqpXC49BuQ3ZC16CX8/od6/public/values?alt=json')
+      .then(response => response.json())
+      .then(json => {
+        data = json.feed.entry.map(entry => ({
+          kod: entry.gsx$kod.$t,
+          sekil: entry.gsx$şəkil.$t,
+          link: entry.gsx$instagramlinki.$t,
+          qiymet: entry.gsx$qiymət.$t,
+          aciqlama: entry.gsx$açıqlama.$t
+        }));
+      });
+
+    function searchProduct() {
+      const value = document.getElementById("search").value.trim();
+      const container = document.getElementById("result");
+      container.innerHTML = "";
+
+      const result = data.find(item => item.kod.toLowerCase() === value.toLowerCase());
+      if (result) {
+        container.innerHTML = `
+          <div class="product">
+            <img src="${result.sekil}" alt="Ürün Resmi">
+            <p><strong>Kod:</strong> ${result.kod}</p>
+            <p><strong>Qiymət:</strong> ${result.qiymet}</p>
+            <p><strong>Açıqlama:</strong> ${result.aciqlama}</p>
+            <p><a href="${result.link}" target="_blank">Instagram Linki</a></p>
+          </div>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>
