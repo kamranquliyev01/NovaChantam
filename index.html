@@ -81,11 +81,14 @@
       });
 
     function searchProduct() {
-      const searchValue = document.getElementById('searchInput').value.trim().toLowerCase();
+      const searchValue = document.getElementById('searchInput').value.trim().replace(/^0+/, '').toLowerCase();
       const container = document.getElementById('products');
       container.innerHTML = '';
 
-      const found = allProducts.find(p => (p['Kod'] || '').toLowerCase() === searchValue);
+      const found = allProducts.find(p => {
+        const kod = (p['Kod'] || '').trim().replace(/^0+/, '').toLowerCase();
+        return kod === searchValue;
+      });
 
       if (found) {
         const productEl = document.createElement('div');
