@@ -11,10 +11,10 @@
       max-width: 600px;
       margin: auto;
     }
-    input {
+    input, button {
       width: 100%;
       padding: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       font-size: 16px;
     }
     .product {
@@ -37,22 +37,17 @@
 </head>
 <body>
   <h2>Ürün Ara</h2>
-  <input type="text" id="search" placeholder="Kod yazın..." oninput="searchProduct()">
+  <input type="text" id="search" placeholder="Kod yazın...">
+  <button onclick="searchProduct()">Ara</button>
   <div id="result"></div>
 
   <script>
     let data = [];
 
-    fetch('https://spreadsheets.google.com/feeds/list/1N2xdNZCFvvbQj6W46TUtCMyVLvqpXC49BuQ3ZC16CX8/od6/public/values?alt=json')
+    fetch('https://script.google.com/macros/s/AKfycbysdY-TOI-2iqra1KrIm6QkvUSH2rTVv2bCKX96-P7v/dev')
       .then(response => response.json())
       .then(json => {
-        data = json.feed.entry.map(entry => ({
-          kod: entry.gsx$kod.$t,
-          sekil: entry.gsx$şəkil.$t,
-          link: entry.gsx$instagramlinki.$t,
-          qiymet: entry.gsx$qiymət.$t,
-          aciqlama: entry.gsx$açıqlama.$t
-        }));
+        data = json;
       });
 
     function searchProduct() {
@@ -60,17 +55,20 @@
       const container = document.getElementById("result");
       container.innerHTML = "";
 
-      const result = data.find(item => item.kod.toLowerCase() === value.toLowerCase());
+      const result = data.find(item => item.Kod?.toLowerCase() === value.toLowerCase());
+
       if (result) {
         container.innerHTML = `
           <div class="product">
-            <img src="${result.sekil}" alt="Ürün Resmi">
-            <p><strong>Kod:</strong> ${result.kod}</p>
-            <p><strong>Qiymət:</strong> ${result.qiymet}</p>
-            <p><strong>Açıqlama:</strong> ${result.aciqlama}</p>
-            <p><a href="${result.link}" target="_blank">Instagram Linki</a></p>
+            <img src="${result.Şəkil}" alt="Ürün Resmi">
+            <p><strong>Kod:</strong> ${result.Kod}</p>
+            <p><strong>Qiymət:</strong> ${result.Qiymət}</p>
+            <p><strong>Açıqlama:</strong> ${result.Açıqlama}</p>
+            <p><a href="${result.İnstagram_linki}" target="_blank">Instagram Linki</a></p>
           </div>
         `;
+      } else {
+        container.innerHTML = "<p>Ürün bulunamadı.</p>";
       }
     }
   </script>
