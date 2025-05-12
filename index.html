@@ -27,12 +27,12 @@
 </head>
 <body>
   <h1>Nova Chantam Products</h1>
-  <div id="products"></div>
+  <div id="products">Loading...</div>
 
   <script>
-    const apiKey = 'AIzaSyBZQt2WKtq1Bh_ZUNsGiPf63icaPe3jA6s'; // buraya Google Cloud-dan aldığın API açarını yerləşdir
+    const apiKey = 'AIzaSyB4VnAv_NKDknPZLTcD8JhZy5D3ONx-M2k'; // <-- Sənin API açarın
     const sheetId = '1N2xdNZCFvvbQj6W46TUtCMyVLvqpXC49BuQ3ZC16CX8';
-    const range = 'Sayfa1'; // Əgər Sheet-in adı fərqlidirsə dəyiş
+    const range = 'Sayfa1';
 
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
 
@@ -41,6 +41,7 @@
       .then(data => {
         const rows = data.values;
         const container = document.getElementById('products');
+        container.innerHTML = '';
 
         if (rows.length > 1) {
           const headers = rows[0];
@@ -62,6 +63,8 @@
             `;
             container.appendChild(productEl);
           }
+        } else {
+          container.innerText = 'No products found.';
         }
       })
       .catch(error => {
