@@ -8,81 +8,101 @@
       font-family: Arial, sans-serif;
       padding: 20px;
     }
+    .search {
+      margin-bottom: 20px;
+    }
     input {
       padding: 8px;
-      font-size: 16px;
+      width: 200px;
     }
     button {
-      padding: 8px 12px;
-      font-size: 16px;
-      margin-left: 8px;
+      padding: 8px 16px;
       cursor: pointer;
     }
     .product {
       border: 1px solid #ccc;
       padding: 12px;
-      margin-top: 16px;
+      margin-top: 12px;
       border-radius: 8px;
     }
     .product img {
-      max-width: 200px;
+      max-width: 120px;
       display: block;
       margin-bottom: 8px;
-      border-radius: 8px;
+    }
+    .product h3 {
+      margin: 0 0 6px;
+    }
+    .product a {
+      text-decoration: none;
+      color: #1a0dab;
     }
   </style>
 </head>
 <body>
   <h1>Nova Chantam Məhsul Axtar</h1>
-  <input type="text" id="searchInput" placeholder="Kod">
-  <button onclick="searchProduct()">Axtar</button>
-  <div id="result"></div>
+
+  <div class="search">
+    <input type="text" id="searchInput" placeholder="Məhsul kodunu yazın">
+    <button onclick="searchProduct()">Axtar</button>
+  </div>
+
+  <div id="products">Kod yazaraq axtarış edin.</div>
 
   <script>
-    const apiKey = 'AIzaSyB4VnAv_NKDknPZLTcD8JhZy5D3ONx-M2k';
+    const apiKey = 'AIzaSyDAyV7wD0nZezA8_3ytvRJOu3oRPSi8U2A';
     const sheetId = '1N2xdNZCFvvbQj6W46TUtCMyVLvqpXC49BuQ3ZC16CX8';
     const range = 'Sayfa1';
 
-    async function fetchData() {
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
-      const response = await fetch(url);
-      const data = await response.json();
-      return data.values;
-    }
+    let allProducts = [];
 
-    async function searchProduct() {
-      const input = document.getElementById('searchInput').value.trim();
-      const resultDiv = document.getElementById('result');
-      resultDiv.innerHTML = 'Yüklənir...';
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
 
-      try {
-        const rows = await fetchData();
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        const rows = data.values;
         const headers = rows[0];
-        const kodIndex = headers.indexOf('Kod');
 
-        const product = rows.find((row, idx) => idx !== 0 && row[kodIndex] === input);
-
-        if (product) {
-          const productData = {};
-          headers.forEach((h, i) => {
-            productData[h] = product[i] || '';
+        for (let i = 1; i < rows.length; i++) {
+          const row = rows[i];
+          const product = {};
+          headers.forEach((header, index) => {
+            product[header] = row[index] || '';
           });
-
-          resultDiv.innerHTML = `
-            <div class="product">
-              <img src="${productData['Şəkil']}" alt="Məhsul şəkli" onerror="this.style.display='none'">
-              <p><strong>Kod:</strong> ${productData['Kod']}</p>
-              <p><strong>Qiymət:</strong> ${productData['Qiymət']}</p>
-              <p><strong>Açıqlama:</strong> ${productData['Açıqlama']}</p>
-              <p><a href="${productData['İnstagram linki']}" target="_blank" rel="noopener noreferrer">Instagramda bax</a></p>
-            </div>
-          `;
-        } else {
-          resultDiv.innerHTML = 'Bu kodla uyğun məhsul tapılmadı.';
+          allProducts.push(product);
         }
-      } catch (error) {
-        console.error(error);
-        resultDiv.innerHTML = 'Xəta baş verdi.';
+
+        document.getElementById('products').innerText = 'Kod daxil edin və "Axtar" düyməsinə basın.';
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        document.getElementById('products').innerText = 'Məlumat yüklənmədi.';
+      });
+
+    function searchProduct() {
+      const searchValue = document.getElementById('searchInput').value.trim().replace(/^0+/, '').toLowerCase();
+      const container = document.getElementById('products');
+      container.innerHTML = '';
+
+      const found = allProducts.find(p => {
+        const kod = (p['Kod'] || '').trim().replace(/^0+/, '').toLowerCase();
+        return kod === searchValue;
+      });
+
+      if (found) {
+        const productEl = document.createElement('div');
+        productEl.className = 'product';
+        productEl.innerHTML = `
+          <img src="${found['Şəkil']}" alt="Məhsul şəkli" />
+          <h3>Kod: ${found['Kod']}</h3>
+          <p><strong>Qiymət:</strong> ${found['Qiymət']}</p>
+          <p><strong>Açıqlama:</strong> ${found['Açıqlama']}</p>
+          <p><a href="${found['İnstagram linki']}" target="_blank">İnstagramda bax</a></p>
+        `;
+        container.appendChild(productEl);
+      } else {
+        container.innerText = 'Bu kodla uyğun məhsul tapılmadı.';
       }
     }
   </script>
