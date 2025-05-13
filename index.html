@@ -2,7 +2,7 @@
 <html lang="az">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Nova Chantam Məhsullar</title>
   <style>
     body {
@@ -73,7 +73,7 @@
   <h1>Nova Chantam Məhsul Axtar</h1>
 
   <div class="search">
-    <input type="text" id="searchInput" placeholder="Məhsul kodunu yazın" oninput="searchProduct()" />
+    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="searchInput" placeholder="Məhsul kodunu yazın" oninput="searchProduct()" />
     <button onclick="searchProduct()">Axtar</button>
   </div>
 
