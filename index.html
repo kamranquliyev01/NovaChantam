@@ -24,7 +24,7 @@
       max-width: 300px;
       border: 1px solid #ccc;
       border-radius: 6px;
-      font-size: 16px; /* Zoom-un qarşısını alır */
+      font-size: 16px;
     }
     button {
       padding: 10px 20px;
@@ -33,7 +33,7 @@
       color: white;
       border: none;
       border-radius: 6px;
-      margin-left: 10px;
+      margin-top: 10px;
       font-size: 16px;
     }
     .product {
@@ -47,7 +47,6 @@
     }
     .product img {
       width: 100%;
-      max-width: 100%;
       height: auto;
       display: block;
       margin: 0 auto 10px;
@@ -66,7 +65,6 @@
       }
       input, button {
         width: 90%;
-        margin-top: 10px;
       }
     }
   </style>
@@ -76,6 +74,7 @@
 
   <div class="search">
     <input type="tel" inputmode="numeric" pattern="[0-9]*" id="searchInput" placeholder="Məhsul kodunu yazın" oninput="searchProduct()" />
+    <br>
     <button onclick="searchProduct()">Axtar</button>
   </div>
 
@@ -123,16 +122,23 @@
 
       if (found) {
         let sekilURL = found['Şəkil'] || '';
-        const googleMatch = sekilURL.match(/\/d\/(.*?)\//);
-        if (googleMatch) {
-          const fileId = googleMatch[1];
-          sekilURL = `https://drive.google.com/uc?export=view&id=${fileId}`;
+
+        // Əgər şəkil linki ImgBB-dəndirsə, birbaşa istifadə et
+        if (sekilURL.includes("ibb.co")) {
+          // Heç bir dəyişiklik etmədən saxlayırıq
+        } else {
+          // Google Drive üçün çevirmə
+          const googleMatch = sekilURL.match(/\/d\/(.*?)\//);
+          if (googleMatch) {
+            const fileId = googleMatch[1];
+            sekilURL = `https://drive.google.com/uc?export=view&id=${fileId}`;
+          }
         }
 
         const productEl = document.createElement('div');
         productEl.className = 'product';
         productEl.innerHTML = `
-          <img src="${sekilURL}" alt="Məhsul şəkli" />
+          <img src="${sekilURL}" alt="Məhsul şəkli" loading="lazy" />
           <h3>Kod: ${found['Kod']}</h3>
           <p><strong>Qiymət:</strong> ${found['Qiymət']}</p>
           <p><strong>Açıqlama:</strong> ${found['Açıqlama']}</p>
