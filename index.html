@@ -12,17 +12,8 @@
       background: #f9f9f9;
       text-align: center;
     }
-    .logo {
-      margin-bottom: 10px;
-    }
-    .logo img {
-      width: 160px;
-      max-width: 80%;
-      height: auto;
-    }
     h1 {
       font-size: 24px;
-      margin-top: 10px;
     }
     .search {
       margin-bottom: 20px;
@@ -79,12 +70,6 @@
   </style>
 </head>
 <body>
-
-  <!-- LOGO -->
-  <div class="logo">
-    <img src="logo.jpg" alt="Nova Chantam Logo">
-  </div>
-
   <h1>Nova Chantam Məhsul Axtar</h1>
 
   <div class="search">
@@ -138,9 +123,11 @@
       if (found) {
         let sekilURL = found['Şəkil'] || '';
 
+        // Əgər şəkil linki ImgBB-dəndirsə, birbaşa istifadə et
         if (sekilURL.includes("ibb.co")) {
-          // do nothing
+          // Heç bir dəyişiklik etmədən saxlayırıq
         } else {
+          // Google Drive üçün çevirmə
           const googleMatch = sekilURL.match(/\/d\/(.*?)\//);
           if (googleMatch) {
             const fileId = googleMatch[1];
