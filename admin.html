@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Məhsul Əlavə Et</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f3f3f3;
+      max-width: 500px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+    }
+    #statusMesaji {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Məhsul Əlavə Et</h2>
+
+<form id="addForm">
+  <input type="text" id="kod" placeholder="Kod" required>
+  <input type="text" id="qiymet" placeholder="Qiymət" required>
+  <input type="text" id="acqlama" placeholder="Açıqlama" required>
+  <input type="text" id="instagram" placeholder="İnstagram linki">
+  <input type="text" id="sekil" placeholder="Şəkil linki (imgbb)">
+  <button type="submit">Əlavə Et</button>
+</form>
+
+<div id="statusMesaji"></div>
+
+<script>
+  document.getElementById('addForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const data = {
+      Kod: document.getElementById('kod').value,
+      Qiymət: document.getElementById('qiymet').value,
+      Açıqlama: document.getElementById('acqlama').value,
+      "İnstagram linki": document.getElementById('instagram').value,
+      Şəkil: document.getElementById('sekil').value
+    };
+
+    fetch('https://script.google.com/macros/s/AKfycby1rO5Z__tY3wJc8bisA_Mh2hIKHGA1MalHmi6c6MpexWdjhnnyY9gSMF42Gmfh1xV_pw/exec', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(res => res.json())
+    .then(response => {
+      document.getElementById('statusMesaji').innerText = "✅ Məhsul əlavə olundu!";
+      document.getElementById('addForm').reset();
+    })
+    .catch(error => {
+      console.error('Xəta:', error);
+      document.getElementById('statusMesaji').innerText = "❌ Xəta baş verdi!";
+    });
+  });
+</script>
+
+</body>
+</html>
