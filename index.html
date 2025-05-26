@@ -12,30 +12,29 @@
       background: #f9f9f9;
       text-align: center;
     }
-    h1, h2 {
+    h1 {
       font-size: 24px;
     }
-    .search, form {
-      margin-bottom: 30px;
+    .search {
+      margin-bottom: 20px;
     }
-    input, button {
+    input {
       padding: 10px;
       width: 80%;
       max-width: 300px;
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 16px;
-      margin-bottom: 10px;
     }
     button {
+      padding: 10px 20px;
+      cursor: pointer;
       background: #1a0dab;
       color: white;
       border: none;
-      cursor: pointer;
-    }
-    #statusMesaji {
-      font-weight: bold;
-      color: green;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 16px;
     }
     .product {
       border: 1px solid #ccc;
@@ -61,6 +60,9 @@
       color: #1a0dab;
     }
     @media (max-width: 480px) {
+      h1 {
+        font-size: 20px;
+      }
       input, button {
         width: 90%;
       }
@@ -77,20 +79,6 @@
   </div>
 
   <div id="products">Kod yazaraq axtarış edin.</div>
-
-  <hr><br>
-
-  <h2>Admin Panel – Məhsul Əlavə Et</h2>
-  <form id="addForm">
-    <input type="text" id="kod" placeholder="Kod" required><br>
-    <input type="text" id="qiymet" placeholder="Qiymət" required><br>
-    <input type="text" id="acqlama" placeholder="Açıqlama" required><br>
-    <input type="text" id="instagram" placeholder="İnstagram linki"><br>
-    <input type="text" id="sekil" placeholder="Şəkil linki (imgbb)"><br>
-    <button type="submit">Əlavə Et</button>
-  </form>
-
-  <div id="statusMesaji"></div>
 
   <script>
     const apiKey = 'AIzaSyDAyV7wD0nZezA8_3ytvRJOu3oRPSi8U2A';
@@ -135,7 +123,11 @@
       if (found) {
         let sekilURL = found['Şəkil'] || '';
 
-        if (!sekilURL.includes("ibb.co")) {
+        // Əgər şəkil linki ImgBB-dəndirsə, birbaşa istifadə et
+        if (sekilURL.includes("ibb.co")) {
+          // Heç bir dəyişiklik etmədən saxlayırıq
+        } else {
+          // Google Drive üçün çevirmə
           const googleMatch = sekilURL.match(/\/d\/(.*?)\//);
           if (googleMatch) {
             const fileId = googleMatch[1];
@@ -157,36 +149,6 @@
         container.innerText = 'Bu kodla uyğun məhsul tapılmadı.';
       }
     }
-
-    // Admin panel formu
-    document.getElementById('addForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const data = {
-        Kod: document.getElementById('kod').value,
-        Qiymət: document.getElementById('qiymet').value,
-        Açıqlama: document.getElementById('acqlama').value,
-        "İnstagram linki": document.getElementById('instagram').value,
-        Şəkil: document.getElementById('sekil').value
-      };
-
-      fetch('https://script.google.com/macros/s/AKfycby1rO5Z__tY3wJc8bisA_Mh2hIKHGA1MalHmi6c6MpexWdjhnnyY9gSMF42Gmfh1xV_pw/exec', {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(res => res.json())
-      .then(response => {
-        document.getElementById('statusMesaji').innerText = "✅ Məhsul əlavə olundu!";
-        document.getElementById('addForm').reset();
-      })
-      .catch(error => {
-        console.error('Xəta:', error);
-        document.getElementById('statusMesaji').innerText = "❌ Xəta baş verdi!";
-      });
-    });
   </script>
 </body>
 </html>
